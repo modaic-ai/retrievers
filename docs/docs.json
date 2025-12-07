@@ -1,0 +1,134 @@
+{
+  "theme": "mint",
+  "name": "Modaic Docs",
+  "colors": {
+    "primary": "#8800c2",
+    "light": "#cc8c98"
+  },
+  "logo": {
+    "light": "./images/logo.svg",
+    "dark": "./images/logo.svg",
+    "href": "https://www.modaic.dev/"
+  },
+  "appearance": {
+    "default": "dark",
+    "strict": false
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "SDK Reference",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "Programs",
+            "pages": [
+              {
+                "title": "PrecompiledProgram",
+                "description": "The Precompiled Program Class",
+                "path": "sdk_reference/vdb_alchemy/precompiled"
+              },
+              {
+                "title": "AutoProgram",
+                "description": "Load Programs from the Modaic Hub",
+                "path": "sdk_reference/vdb_alchemy/auto"
+              }
+            ]
+          },
+          {
+            "group": "Context",
+            "pages": [
+              {
+                "title": "Bases Classes",
+                "description": "The Base Context Classes",
+                "path": "sdk_reference/vdb_alchemy/context/base"
+              },
+              {
+                "title": "Table",
+                "description": "The Table Context Classes",
+                "path": "sdk_reference/vdb_alchemy/context/table"
+              },
+              {
+                "title": "Text",
+                "description": "The Text Context Classes",
+                "path": "sdk_reference/vdb_alchemy/context/text"
+              },
+              {
+                "title": "DTypes",
+                "description": "Modaic DTypes",
+                "path": "sdk_reference/vdb_alchemy/context/dtype_mapping"
+              }
+            ]
+          },
+          {
+            "group": "Indexing",
+            "pages": [
+              {
+                "title": "Indexing Utils",
+                "description": "The Indexing Utils Class",
+                "path": "sdk_reference/vdb_alchemy/indexing"
+              }
+            ]
+          },
+          {
+            "group": "Databases",
+            "pages": [
+              {
+                "group": "Vector Database",
+                "pages": [
+                  {
+                    "title": "VectorDatabase Class",
+                    "description": "The Vector Database Class",
+                    "path": "sdk_reference/vdb_alchemy/databases/vector_database"
+                  },
+                  {
+                    "group": "Vendors",
+                    "pages": [
+                      {
+                        "title": "Milvus",
+                        "description": "Milvus Integration",
+                        "path": "sdk_reference/vdb_alchemy/databases/vector_database/vendors/milvus"
+                      }
+                    ]
+                  },
+                  {
+                    "title": "VDB Query Language",
+                    "description": "The Modaic Query Language Class",
+                    "path": "sdk_reference/vdb_alchemy/query_language"
+                  }
+                ]
+              },
+              {
+                "title": "SQL Database",
+                "description": "A SQL Database for RAG over Tables",
+                "path": "sdk_reference/vdb_alchemy/databases/sql_database"
+              },
+              {
+                "title": "Graph Database",
+                "description": "A Graph Database for RAG over Graphs",
+                "path": "sdk_reference/vdb_alchemy/databases/graph_database"
+              }
+            ]
+          },
+          {
+            "group": "Context Storage",
+            "pages": [
+              {
+                "title": "Bases Classes",
+                "description": "The Bases Classes",
+                "path": "sdk_reference/vdb_alchemy/storage/context_store"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "menu": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/modaic/modaic"
+      }
+    ]
+  },
+  "$schema": "https://mintlify.com/docs.json"
+}
