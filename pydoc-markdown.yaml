@@ -1,9 +1,9 @@
 # pydoc-markdown.yaml
 loaders:
   - type: python
-    # search_path: ["src"]          # <- classic src/ layout
-    # packages: ["modaic"]
-    # modules: []
+    search_path: ["."]          # <- classic src/ layout
+    # packages: ["retrievers"]
+    # modules: ["retrievers.indexing"]
 
 processors:
   - type: smart
@@ -22,48 +22,50 @@ renderer:
         pages:
           - title: Bases Classes
             description: The Base Context Classes
-            path: vdb_alchemy/context/base
+            path: retrievers/context/base
           - title: Table
             description: The Table Context Classes
-            path: vdb_alchemy/context/table
+            path: retrievers/context/table
           - title: Text
             description: The Text Context Classes
-            path: vdb_alchemy/context/text
+            path: retrievers/context/text
           - title: DTypes
-            description: Modaic DTypes
-            path: vdb_alchemy/context/dtype_mapping
+            description: Retrievers DTypes
+            path: retrievers/context/dtype_mapping
       - group: Indexing
         pages: 
           - title: Indexing Utils
             description: The Indexing Utils Class
-            path: vdb_alchemy/indexing
+            path: retrievers/indexing
       - group: Databases
         pages:
           - group: Vector Database
             pages:
               - title: VectorDatabase Class
                 description: The Vector Database Class
-                path: vdb_alchemy/databases/vector_database
+                path: retrievers/databases/vector_database/vector_database
               - group: Vendors
                 pages:
                   - title: Milvus
                     description: Milvus Integration
-                    path: vdb_alchemy/databases/vector_database/vendors/milvus
+                    path: retrievers/databases/vector_database/vendors/milvus
               - title: VDB Query Language
-                description: The Modaic Query Language Class
-                path: vdb_alchemy/query_language
+                description: The Retrievers Query Language Class
+                path: retrievers/query_language
           - title: SQL Database
             description: A SQL Database for RAG over Tables
-            path: vdb_alchemy/databases/sql_database
+            path: retrievers/databases/sql_database
           - title: Graph Database
             description: A Graph Database for RAG over Graphs
-            path: vdb_alchemy/databases/graph_database
+            path: retrievers/databases/graph_database
       - group: Context Storage
         pages:
-          - title: Bases Classes
-            description: The Bases Classes
-            path: vdb_alchemy/storage/context_store
-
+          - title: File Store
+            description: The File Store Class
+            path: retrievers/storage/file_store
+          - title: Pickle Store
+            description: The Pickle Store Class
+            path: retrievers/storage/pickle_store
   markdown:
     add_module_prefix: false
     descriptive_module_title: false

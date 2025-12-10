@@ -2,9 +2,7 @@
 title: VDB Alchemy
 ---
 
-# VDB Alchemy
-
-Modaic provides an ORM-like layer for vector databases called VDB Alchemy. With a single `VectorDatabase` abstraction, you can create, load, and search collections of any `Context` objects. Configure a provider by passing a `VectorDBBackend` to `VectorDatabase`. The Milvus provider is currently supported (both Milvus Server and Milvus Lite via `MilvusBackend.from_local("path.db")`). You can optionally set a default `Embedder` and a default `payload_class` (a `Context` subclass) on the connection; these defaults apply unless overridden.
+Retrievers provides an ORM-like layer for vector databases called VDB Alchemy. With a single `VectorDatabase` abstraction, you can create, load, and search collections of any `Context` objects. Configure a provider by passing a `VectorDBBackend` to `VectorDatabase`. The Milvus provider is currently supported (both Milvus Server and Milvus Lite via `MilvusBackend.from_local("path.db")`). You can optionally set a default `Embedder` and a default `payload_class` (a `Context` subclass) on the connection; these defaults apply unless overridden.
 
 
 ### Install
@@ -19,9 +17,9 @@ uv add pymilvus pillow
 ### MilvusBackend
 Connect to Milvus Lite (single-file local) or Milvus Server.
 ```python
-from modaic.databases import VectorDatabase, MilvusBackend
-from modaic.indexing import DummyEmbedder
-from modaic.context.table import TableFile
+from retrievers.databases import VectorDatabase, MilvusBackend
+from retrievers.indexing import DummyEmbedder
+from retrievers.context.table import TableFile
 
 # Defaults for this connection (used unless overridden per collection)
 embedder = DummyEmbedder()
@@ -45,9 +43,9 @@ Create a connection, create/load a collection, add records, and search.
 from pathlib import Path
 import os
 
-from modaic.databases import VectorDatabase, MilvusBackend
-from modaic.indexing import DummyEmbedder
-from modaic.context.table import TableFile
+from retrievers.databases import VectorDatabase, MilvusBackend
+from retrievers.indexing import DummyEmbedder
+from retrievers.context.table import TableFile
 
 embedder = DummyEmbedder()
 vdb = VectorDatabase(MilvusBackend.from_local("index.db"), embedder=embedder, payload_class=TableFile)
@@ -76,7 +74,7 @@ vdb.load_collection("table_rag", TableFile)
 
 Change the default embedder later if needed:
 ```python
-from modaic.indexing import DummyEmbedder
+from retrievers.indexing import DummyEmbedder
 vdb.set_embedder(DummyEmbedder())
 ```
 
@@ -124,10 +122,10 @@ first_query_top = results[0][0]  # {"id", "distance", "context"}
 ```
 
 ### Filters
-#### Using the Modaic Query Language
-Use the Modaic Query Language:
+#### Using the Retrievers Query Language
+Use the Retrievers Query Language:
 ```python
-from modaic.context.table import TableFile
+from retrievers.context.table import TableFile
 
 results = vdb.search(
     "table_rag",
@@ -140,7 +138,7 @@ results = vdb.search(
 #### Using `Prop`, `Value`, `AND` and `OR`
 You can also build filters manually using `Prop`, `Value`, `AND` and `OR`.
 ```python
-from modaic.databases import Prop, Value, AND, OR
+from retrievers.databases import Prop, Value, AND, OR
 filter1 = Prop("file_type") == "xlsx"
 # Same as Prop("file_type") == Value("xlsx")
 filter2 = Prop("file_type") == "csv"
@@ -150,10 +148,10 @@ my_filter = filter1 & (filter2 | filter3)
 results = vdb.search("table_rag", "test", k=3, filter={"file_type": "xlsx"})
 ```
 #### Using Backend's native filtering language
-If modaic doesnt expose a specific operator for you vector database backend, you can always use the backend's native filtering language by directly accessing the backend's search method.
+If `retrievers` doesnt expose a specific operator for you vector database backend, you can always use the backend's native filtering language by directly accessing the backend's search method.
 ```python
-from modaic.context.table import TableFile
-from modaic.databases import MilvusBackend, VectorDatabase
+from retrievers.context.table import TableFile
+from retrievers.databases import MilvusBackend, VectorDatabase
 vdb = VectorDatabase(MilvusBackend.from_local("index.db"))
 # When using backend.search, you also need to pass the payload_class to the search method.
 results = vdb.ext.backend.search("table_rag", "test", k=3, payload_class=TableFile, filter='file_type == "xlsx"')
@@ -182,7 +180,7 @@ exists = vdb.has_collection("table_rag")
 ## Get Records by IDs
 Use the provider via `vdb.ext.backend` to fetch records by IDs with the correct `payload_class`.
 ```python
-from modaic.context.table import TableFile
+from retrievers.context.table import TableFile
 
 records = vdb.ext.backend.get_records(
     "table_rag",
@@ -202,7 +200,7 @@ client = vdb.ext.client
 ## Indexes and Metrics
 Customize vector type, index type, metric, and embedder when creating a collection.
 ```python
-from modaic.databases import IndexType, Metric, VectorType
+from retrievers.databases import IndexType, Metric, VectorType
 
 vdb.create_collection(
     "table_rag",
@@ -262,5 +260,5 @@ VectorDatabase and VectorDBBackend type hints are an quick and easy way to check
 
 
 ### See also
-- `modaic.context.table.Table` and `TableFile` for creating tabular Contexts
+- `retrievers.context.table.Table` and `TableFile` for creating tabular Contexts
 - Query Language docs for expressive filtering

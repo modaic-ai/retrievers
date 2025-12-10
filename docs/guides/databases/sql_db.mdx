@@ -2,7 +2,7 @@
 title: SQL Database
 ---
 
-Modaic provides a thin, ergonomic layer over SQLAlchemy for working with tabular `Context` data in relational databases. Use `SQLDatabase` to:
+Retrievers provides a thin, ergonomic layer over SQLAlchemy for working with tabular `Context` data in relational databases. Use `SQLDatabase` to:
 
 - Create a connection via a backend (SQLite local/in-memory, or server backends like MySQL/Postgres)
 - Add `Table`/`TableFile` data as SQL tables
@@ -19,8 +19,8 @@ This guide mirrors the style of our Vector Database docs and focuses on practica
 Create a SQLite database, write a table from a pandas DataFrame, list tables, read it back, and query.
 ```python
 import pandas as pd
-from modaic.databases.sql_database import SQLDatabase, SQLiteBackend
-from modaic.context.table import Table
+from retrievers.databases.sql_database import SQLDatabase, SQLiteBackend
+from retrievers.context.table import Table
 
 # 1) Connect
 db = SQLDatabase(SQLiteBackend(in_memory=True))
@@ -50,7 +50,7 @@ print(rows)  # [(1, 100), (2, 250), (3, 175)]
 ### SQLiteBackend
 Connect to a file-backed or in-memory SQLite database.
 ```python
-from modaic.databases.sql_database import SQLDatabase, SQLiteBackend
+from retrievers.databases.sql_database import SQLDatabase, SQLiteBackend
 
 # File-backed SQLite
 db = SQLDatabase(SQLiteBackend(db_path="tests/artifacts/test.db"))
@@ -67,7 +67,7 @@ SQLiteBackend(db_path="app.db", query_params={"cache":"shared"})
 ### SQLServerBackend
 Configure remote databases like MySQL or Postgres by URL parts.
 ```python
-from modaic.databases.sql_database import SQLDatabase, SQLServerBackend
+from retrievers.databases.sql_database import SQLDatabase, SQLServerBackend
 
 # Example: Postgres
 pg = SQLDatabase(
@@ -107,7 +107,7 @@ db = SQLDatabase("sqlite:///./app.db")
 
 ### From a `Table`
 ```python
-from modaic.context.table import Table
+from retrievers.context.table import Table
 
 users = Table(
     df=pd.DataFrame({
@@ -123,7 +123,7 @@ db.add_table(users, if_exists="replace")  # "fail" | "replace" | "append"
 ### From `TableFile` (CSV/XLS/XLSX/TSV)
 ```python
 from pathlib import Path
-from modaic.context.table import TableFile
+from retrievers.context.table import TableFile
 
 orders = TableFile.from_file(
     file_ref="orders.xlsx",
@@ -253,8 +253,8 @@ db.drop_tables(["orders", "products"])  # ignores missing by default
 
 Use any `FileStore` to bulk-load tabular files as SQL tables via `TableFile`. Each file becomes a table.
 ```python
-from modaic.storage.file_store import LocalFileStore
-from modaic.context.table import TableFile
+from retrievers.storage.file_store import LocalFileStore
+from retrievers.context.table import TableFile
 
 store = LocalFileStore("examples/TableRAG/dev_excel")
 
@@ -290,8 +290,8 @@ db.add_file_store(store, folder="reports/2024")
 
 ```python
 import pandas as pd
-from modaic.databases.sql_database import SQLDatabase, SQLiteBackend
-from modaic.context.table import Table
+from retrievers.databases.sql_database import SQLDatabase, SQLiteBackend
+from retrievers.context.table import Table
 
 db = SQLDatabase(SQLiteBackend(in_memory=True))
 
@@ -359,5 +359,5 @@ print(db.get_table_metadata("customers"))  # {"domain": "sales"}
 
 
 ### See also
-- `modaic.context.table.Table` and `TableFile` for creating tabular Contexts
+- `retrievers.context.table.Table` and `TableFile` for creating tabular Contexts
 - Query Language docs for filtering/transforming tabular data in-memory when you don't need a SQL database

@@ -9,8 +9,8 @@ File stores provide a simple, uniform interface to reference and load files that
 
 Create a store from a folder of spreadsheets and load them as `TableFile` contexts.
 ```python
-from modaic.storage.file_store import InPlaceFileStore
-from modaic.context.table import TableFile
+from retrievers.storage.file_store import InPlaceFileStore
+from retrievers.context.table import TableFile
 
 store = InPlaceFileStore("examples/TableRAG/dev_excel")
 
@@ -41,7 +41,7 @@ print(ref in store)        # membership
 
 All file stores implement the `FileStore` interface.
 ```python
-from modaic.storage.file_store import FileStore
+from retrievers.storage.file_store import FileStore
 
 # Required
 FileStore.get(reference: str) -> FileResult          # open the file + metadata
@@ -57,7 +57,7 @@ for ref in file_store: ...  # same as iter(keys())
 
 `FileResult` carries both the file handle and useful hints:
 ```python
-from modaic.storage.file_store import FileResult
+from retrievers.storage.file_store import FileResult
 
 FileResult(
     file: Path | IO,    # openable path/stream
@@ -69,7 +69,7 @@ FileResult(
 
 Mutable stores additionally support write operations via `MutableFileStore`:
 ```python
-from modaic.storage.file_store import MutableFileStore
+from retrievers.storage.file_store import MutableFileStore
 
 MutableFileStore.add(file: str | Path | IO) -> str
 MutableFileStore.update(reference: str, file: str | Path | IO) -> None
@@ -82,7 +82,7 @@ MutableFileStore.remove(reference: str) -> None
 ## InPlaceFileStore (immutable)
 Wraps a directory; files are read-only through the store. Keys are paths relative to the root.
 ```python
-from modaic.storage.file_store import InPlaceFileStore
+from retrievers.storage.file_store import InPlaceFileStore
 
 store = InPlaceFileStore("examples/TableRAG/dev_excel")
 print(next(store.keys()))  # e.g. "Swiss_Super_League_0.xlsx"
@@ -93,7 +93,7 @@ Supports optional `folder` for scoping listing to a subfolder inside the root.
 ## LocalFileStore (mutable)
 Manages a working directory and a hidden `.modaic` area for added files.
 ```python
-from modaic.storage.file_store import LocalFileStore
+from retrievers.storage.file_store import LocalFileStore
 
 store = LocalFileStore("data")
 
@@ -111,8 +111,8 @@ store.remove(ref)
 ## TableFile
 Load spreadsheets or delimited files from any `FileStore`.
 ```python
-from modaic.storage.file_store import InPlaceFileStore
-from modaic.context.table import TableFile
+from retrievers.storage.file_store import InPlaceFileStore
+from retrievers.context.table import TableFile
 
 store = InPlaceFileStore("examples/TableRAG/dev_excel")
 ref = next(store.keys())  # e.g. "1st_New_Zealand_Parliament_0.xlsx"
@@ -127,8 +127,8 @@ Metadata can steer hydration. If your store returns `metadata={"sheet_name": "Sh
 
 ## TextFile
 ```python
-from modaic.storage.file_store import InPlaceFileStore
-from modaic.context.text import TextFile
+from retrievers.storage.file_store import InPlaceFileStore
+from retrievers.context.text import TextFile
 
 store = InPlaceFileStore("./notes")
 ref = "meeting.txt"
@@ -143,9 +143,9 @@ print(doc.dump())
 ## SQLDatabase: one-file-per-table
 Bulk-load tabular files as SQL tables via `TableFile`.
 ```python
-from modaic.databases.sql_database import SQLDatabase, SQLiteBackend
-from modaic.storage.file_store import InPlaceFileStore
-from modaic.context.table import TableFile
+from retrievers.databases.sql_database import SQLDatabase, SQLiteBackend
+from retrievers.storage.file_store import InPlaceFileStore
+from retrievers.context.table import TableFile
 
 store = InPlaceFileStore("examples/TableRAG/dev_excel")
 
@@ -174,10 +174,10 @@ db = SQLDatabase.from_file_store(
 ## VectorDatabase: embed files as searchable Contexts
 Index tables in a vector DB using your embedder. This example mirrors `examples` usage.
 ```python
-from modaic.storage.file_store import InPlaceFileStore
-from modaic.context.table import TableFile
-from modaic.databases import VectorDatabase, MilvusBackend
-from modaic.indexing import DummyEmbedder
+from retrievers.storage.file_store import InPlaceFileStore
+from retrievers.context.table import TableFile
+from retrievers.databases import VectorDatabase, MilvusBackend
+from retrievers.indexing import DummyEmbedder
 import os
 
 store = InPlaceFileStore("examples/TableRAG/dev_excel")
@@ -202,7 +202,7 @@ Example: minimal S3-like read-only store
 ```python
 from pathlib import Path
 from typing import Iterator, Optional
-from modaic.storage.file_store import FileStore, FileResult
+from retrievers.storage.file_store import FileStore, FileResult
 
 class S3FileStore(FileStore):
     def __init__(self, bucket: str, prefix: str = ""):

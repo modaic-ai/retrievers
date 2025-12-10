@@ -1,3 +1,120 @@
 # Retrievers SDK
 
-Easy SDK for building retrieval algorithms for RAG.
+# Installation
+
+You can install the Retrievers SDK using pip:
+
+```bash
+pip install mo-retrievers
+```
+
+or using uv:
+
+```bash
+uv add mo-retrievers
+```
+
+# Semantic Search Example
+
+```python
+from retrievers import VectorDatabase, MilvusBackend
+from retrievers.indexing import DummyEmbedder
+from retrievers.context import Text
+
+vdb = VectorDatabase(MilvusBackend.from_local("index.db"), embedder=DummyEmbedder(), payload_class=Text)
+vdb.create_collection("docs", Text, exists_behavior="replace")
+vdb.add_records("docs", [Text(text="Modaic makes sharing agents easy."), Text(text="Tables can be queried with SQL.")])
+hits = vdb.search("docs", "How do I share agents?", k=1)
+print(hits[0].text)
+```
+
+# Working with Context
+
+## Text and chunking
+
+```python
+from retrievers.context import Text
+
+def simple_splitter(text: str):
+    step = 500
+    for i in range(0, len(text), step):
+        yield text[i:i+step]
+
+doc = Text.from_file("README.md")
+doc.chunk_text(simple_splitter)
+print(len(doc.chunks))
+```
+
+## Tables and SQL queries
+
+```python
+from pathlib import Path
+from modaic.context import TableFile
+
+table = TableFile.from_file(
+    file_ref="employees.xlsx",
+    file=Path("employees.xlsx"),
+    file_type="xlsx",
+)
+
+print(table.schema_info())
+head = table.query("SELECT * FROM this LIMIT 5")
+print(head.shape)
+```
+
+### Query Language
+
+Build structured filters with `Prop`:
+
+```python
+from retrievers.context import Prop
+
+q = (Prop("age") >= 21) & (Prop("role") == "engineer")
+```
+
+# Build a simple Indexer/Retriever with modaic
+
+```python
+from typing import List, Tuple
+import numpy as np
+from modaic import Indexer, PrecompiledConfig
+from retrievers.indexing import DummyEmbedder, Embedder  # convenient for demos
+from retrievers.context import Text
+
+class DocsConfig(PrecompiledConfig):
+    index_name: str = "docs"
+
+class DocsIndexer(Indexer):
+    config: DocsConfig # ! Important: config must be annotated with the config class
+
+    def __init__(self, config: DocsConfig, embedder: Embedder | None = None):
+        super().__init__(config)
+        self.embedder = embedder or DummyEmbedder(embedding_dim=128)
+        self._records: list[Tuple[np.ndarray, Text]] = []
+
+    def ingest(self, contexts: List[Text]):
+        vectors = self.embedder([c.text for c in contexts])
+        for v, c in zip(vectors, contexts):
+            self._records.append((np.asarray(v), c))
+
+    def retrieve(self, query: str, k: int = 5) -> List[Text]:
+        qv = np.asarray(self.embedder(query))
+        scored = [(float(np.dot(qv, v)), c) for v, c in self._records]
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [c for _, c in scored[:k]]
+
+indexer = DocsIndexer(DocsConfig())
+indexer.ingest([Text(text="Modaic makes sharing agents easy."), Text(text="Tables can be queried with SQL.")])
+hits = indexer.retrieve("How do I share agents?", k=1)
+print(hits[0].text)
+```
+
+Save and load your retriever:
+
+```python
+indexer.push_to_hub("yourname/docs-indexer", commit_message="initial indexer")
+
+from modaic import AutoRetriever
+loaded_idx = AutoRetriever.from_precompiled("yourname/docs-indexer")
+print(loaded_idx.retrieve("share agents", k=1)[0].text)
+```

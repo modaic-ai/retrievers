@@ -1,117 +1,85 @@
 ---
-title: Introduction
-description: The Introduction to Modaic
-sidebarTitle: Introduction
+title: Quickstart
+description: Get started using the Retrievers SDK
 ---
 
-# Welcome to Modaic 🐙
-
-Modaic is a hub to share and manage DSPy agents. We provide the `PrecompiledAgent` class which is a subclass of `dspy.Module` with some extra functionality for observability and version control. 
-Modaic also provides the `Retriever` class and a variety of context engineering tools. To get started, refer to the quickstart guide below. To learn more about building
-optimized agents with DSPy, refer to the [DSPy Documentation](https://dspy.ai/).
-
-## Getting Started
-
-Install Modaic:
-### Using uv (recommended)
-To use all features of Modaic, including modaic hub, you need to install using uv.
-```bash
-uv add modaic
-```
-
-You can still use Modaic without uv, but you will not be upload agents to the Modaic Hub.
+# Installation
+You can install the Retrievers SDK using pip:
 
 ```bash
-pip install modaic
+pip install mo-retrievers
 ```
 
-Set your hub token (optional, required for push/load from hub):
+or using uv:
 
 ```bash
-export MODAIC_TOKEN="<your-token>"
+uv add mo-retrievers
 ```
 
-## Core Concepts
-
-- <b>PrecompiledAgent</b>: subclass of `dspy.Module` that implements `forward(...)`. Save and share it with `save_precompiled`/`push_to_hub`.
-- <b>Retriever</b> and <b>Indexer</b>: retrieval components. `Indexer` extends `Retriever` by adding an `ingest` method.
-- <b>PrecompiledConfig</b>: Configuration class for `PrecompiledAgent` and `Retriever` classes. Use this to define experiment specific parameters.
-- <b>AutoAgent/AutoConfig/AutoRetriever</b>: dynamic loaders that fetch classes and configs from a local path or the Modaic hub.
-- <b>Context</b>: typed data objects (e.g., `Text`, `TableFile`) with chunking, embedding, and hydration helpers.
-- <b>Embedder</b>: Wrapper of embedding models.
-
-Explore API references:
-
-- [Auto loaders](/reference/modaic/auto_agent)
-- [Precompiled agent](/reference/modaic/precompiled_agent)
-- [Context base](/reference/modaic/context/base)
-- [Text context](/reference/modaic/context/text)
-- [Table context](/reference/modaic/context/table)
-
-## Quickstart: Your first agent
-<Tip>
-Your agent must have an attribute `config` that is annotated with the config class. Forward references are not supported.
-Example:
+# Semantic Search Example
 ```python
-config: EchoConfig
+from retrievers import VectorDatabase, MilvusBackend
+from retrievers.indexing import DummyEmbedder
+from retrievers.context import Text
+
+vdb = VectorDatabase(MilvusBackend.from_local("index.db"), embedder=DummyEmbedder(), payload_class=Text)
+vdb.create_collection("docs", Text, exists_behavior="replace")
+vdb.add_records("docs", [Text(text="Modaic makes sharing agents easy."), Text(text="Tables can be queried with SQL.")])
+hits = vdb.search("docs", "How do I share agents?", k=1)
+print(hits[0].text)
 ```
-</Tip>
+# Working with Context
+
+## Text and chunking
 
 ```python
-from modaic import PrecompiledAgent, PrecompiledConfig
+from retrievers.context import Text
 
-class EchoConfig(PrecompiledConfig):
-    lm: str = "gpt-4o"
-class EchoAgent(PrecompiledAgent):
-    config: EchoConfig # ! Important: config must be annotated with the config class
+def simple_splitter(text: str):
+    step = 500
+    for i in range(0, len(text), step):
+        yield text[i:i+step]
 
-    def __init__(self, config: EchoConfig, **kwargs):
-        super().__init__(config, **kwargs)
-
-    def forward(self, text: str) -> str:
-        return f"Echo: {text}"
-
-
-agent = EchoAgent(EchoConfig())
-print(agent(text="hello"))
+doc = Text.from_file("README.md")
+doc.chunk_text(simple_splitter)
+print(len(doc.chunks))
 ```
-<Info>
-`PrecompiledAgent` is a `dspy.Module`; call your agent like a function and implement `forward(...)`.
-</Info>
-### Save locally and load dynamically
+
+## Tables and SQL queries
 
 ```python
-agent.save_precompiled("./my-echo")
+from pathlib import Path
+from modaic.context import TableFile
 
-from modaic import AutoAgent, AutoConfig
+table = TableFile.from_file(
+    file_ref="employees.xlsx",
+    file=Path("employees.xlsx"),
+    file_type="xlsx",
+)
 
-cfg = AutoConfig.from_precompiled("./my-echo", local=True)
-loaded = AutoAgent.from_precompiled("./my-echo", local=True)
-print(loaded(text="hi"))
+print(table.schema_info())
+head = table.query("SELECT * FROM this LIMIT 5")
+print(head.shape)
 ```
 
-### Push to the hub (optional)
+### Query Language
 
-<Warning>
-Pushing to or loading from the hub requires `MODAIC_TOKEN`, however,  you can also use local paths.
-</Warning>
+Build structured filters with `Prop`:
 
 ```python
-# Requires MODAIC_TOKEN; pushes to "yourname/echo-agent"
-agent.push_to_hub("yourname/echo-agent", commit_message="initial agent")
+from retrievers.context import Prop
 
-remote = AutoAgent.from_precompiled("yourname/echo-agent")
-print(remote(text="world"))
+q = (Prop("age") >= 21) & (Prop("role") == "engineer")
 ```
 
-## Build a simple Indexer/Retriever
+# Build a simple Indexer/Retriever with modaic
 
 ```python
 from typing import List, Tuple
 import numpy as np
-from modaic import Indexer, PrecompiledConfig, Embedder
-from modaic.indexing import DummyEmbedder  # convenient for demos
-from modaic.context import Text
+from modaic import Indexer, PrecompiledConfig
+from retrievers.indexing import DummyEmbedder, Embedder  # convenient for demos
+from retrievers.context import Text
 
 class DocsConfig(PrecompiledConfig):
     index_name: str = "docs"
@@ -135,63 +103,20 @@ class DocsIndexer(Indexer):
         scored.sort(key=lambda x: x[0], reverse=True)
         return [c for _, c in scored[:k]]
 
-idx = DocsIndexer(DocsConfig())
-idx.ingest([Text(text="Modaic makes sharing agents easy."), Text(text="Tables can be queried with SQL.")])
-hits = idx.retrieve("How do I share agents?", k=1)
+indexer = DocsIndexer(DocsConfig())
+indexer.ingest([Text(text="Modaic makes sharing agents easy."), Text(text="Tables can be queried with SQL.")])
+hits = indexer.retrieve("How do I share agents?", k=1)
 print(hits[0].text)
 ```
 
-Save and load your retriever the same way as agents:
+Save and load your retriever:
 
 ```python
-idx.push_to_hub("yourname/docs-indexer", commit_message="initial indexer")
+indexer.push_to_hub("yourname/docs-indexer", commit_message="initial indexer")
 
 from modaic import AutoRetriever
 loaded_idx = AutoRetriever.from_precompiled("yourname/docs-indexer")
 print(loaded_idx.retrieve("share agents", k=1)[0].text)
 ```
 
-## Working with Context
-
-### Text and chunking
-
-```python
-from modaic.context import Text
-
-def simple_splitter(text: str):
-    step = 500
-    for i in range(0, len(text), step):
-        yield text[i:i+step]
-
-doc = Text.from_file("README.md")
-doc.chunk_text(simple_splitter)
-print(len(doc.chunks))
-```
-
-### Tables and SQL queries
-
-```python
-from pathlib import Path
-from modaic.context import TableFile
-
-table = TableFile.from_file(
-    file_ref="employees.xlsx",
-    file=Path("employees.xlsx"),
-    file_type="xlsx",
-)
-
-print(table.schema_info())
-head = table.query("SELECT * FROM this LIMIT 5")
-print(head.shape)
-```
-
-## Query Language
-
-Build structured filters with `Prop`:
-
-```python
-from modaic.context import Prop
-
-q = (Prop("age") >= 21) & (Prop("role") == "engineer")
-```
 

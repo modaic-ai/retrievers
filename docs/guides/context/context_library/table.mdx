@@ -2,8 +2,6 @@
 title: Tables
 ---
 
-# Tables
-
 The Table context classes provide a powerful way to work with structured tabular data in your agents. They wrap pandas DataFrames to make them compatible with the Context ecosystem, enabling vector storage, retrieval, and semantic operations. Tables can be stored directly in memory for smaller datasets or backed by files for larger ones. These classes are particularly useful for working with spreadsheets, CSV files, and any data that has a row-column structure.
 
 ## Table
@@ -12,7 +10,7 @@ The `Table` class represents an in-memory table backed by pandas DataFrames. It 
 
 ```python
 import pandas as pd
-from modaic.context.table import Table
+from retrievers.context.table import Table
 
 # Create a simple sales data table
 df = pd.DataFrame({
@@ -49,8 +47,8 @@ print(result)
 The `TableFile` class represents a table backed by a file in a `FileStore`. It uses hydration to load data on demand, making it suitable for larger datasets or when you want to avoid storing the entire table in vector databases. This class supports Excel files (xls/xlsx), CSV files, and TSV files.
 
 ```python
-from modaic.context.table import TableFile
-from modaic.storage import InPlaceFileStore
+from retrievers.context.table import TableFile
+from retrievers.storage import InPlaceFileStore
 
 # Set up a file store pointing to your data directory
 store = InPlaceFileStore("data/spreadsheets")

@@ -4,17 +4,17 @@ title: Custom Context Classes
 
 # Guide to Defining Your Own Context Classes
 
-This guide will walk you through the process of creating your own custom Context classes in Modaic. By defining your own Context classes, you can model domain-specific data structures while gaining access to all the powerful features of the Context ecosystem, including chunking, hydration, embedding, and graph database integration.
+This guide will walk you through the process of creating your own custom Context classes in Retrievers. By defining your own Context classes, you can model domain-specific data structures while gaining access to all the powerful features of the Context ecosystem, including chunking, hydration, embedding, and graph database integration.
 
 ## The `Context` Class
 
-The `Context` class is a specialized subclass of `pydantic.BaseModel` that adds several powerful capabilities for agent-based systems. It inherits all the validation, serialization, and type checking features from Pydantic while extending them with additional functionality for semantic operations. When creating your own Context classes, you should always inherit from `Context` rather than directly from `BaseModel` to ensure compatibility with the Modaic ecosystem.
+The `Context` class is a specialized subclass of `pydantic.BaseModel` that adds several powerful capabilities for agent-based systems. It inherits all the validation, serialization, and type checking features from Pydantic while extending them with additional functionality for semantic operations. When creating your own Context classes, you should always inherit from `Context` rather than directly from `BaseModel` to ensure compatibility with the Retrievers ecosystem.
 
 Unlike regular Python classes, Context objects follow Pydantic's initialization patterns. This means you should never define a custom `__init__` method, as doing so will interfere with Pydantic's validation system. Instead, use Pydantic's validator decorators to customize initialization behavior. This approach ensures that your Context classes maintain compatibility with the broader ecosystem.
 
 ## Types and Fields
 
-When defining fields in your Context classes, you can use standard Python types just as you would in any Pydantic model. The `Context.schema()` method will convert your class definition into a `modaic.Schema` object that describes the structure for database payloads. This schema representation is particularly important for vector databases that need to understand the structure of your data.
+When defining fields in your Context classes, you can use standard Python types just as you would in any Pydantic model. The `Context.schema()` method will convert your class definition into a `retrievers.Schema` object that describes the structure for database payloads. This schema representation is particularly important for vector databases that need to understand the structure of your data.
 
 There are several important rules to follow when defining fields in your Context classes:
 
@@ -26,17 +26,17 @@ There are several important rules to follow when defining fields in your Context
 
 4. When using `Literal` types, all possible values must be of the same type (e.g., all strings or all integers, not a mix).
 
-### Modaic Types
+### Types
 
-Modaic provides specialized type annotations in the `modaic.types` module that help constrain field values for database backends. These types add metadata that vector databases can use to optimize storage and indexing.
+Retrievers SDK provides specialized type annotations in the `retrievers.types` module that help constrain field values for database backends. These types add metadata that vector databases can use to optimize storage and indexing.
 
 #### `Array`
 
 The `Array` type is an annotated list that allows you to specify both the element type and the maximum size. This is particularly useful for vector databases that need to allocate fixed-size arrays.
 
 ```python
-from modaic.types import Array
-from modaic.context import Context
+from retrievers.types import Array
+from retrievers.context import Context
 
 class Email(Context):
     content: str
@@ -50,8 +50,8 @@ When you use `Array[dtype, max_size]`, Pydantic will validate that the list cont
 The `String` type is a parameterized string that allows you to specify a maximum length constraint. This is useful for databases that need to allocate fixed-size string fields.
 
 ```python
-from modaic.types import String
-from modaic.context import Context
+from retrievers.types import String
+from retrievers.context import Context
 
 class Email(Context):
     subject: String[100]  # A string with max 100 characters
@@ -67,7 +67,7 @@ While these specialized types provide additional constraints for database optimi
 
 #### Integers and Floats
 
-Modaic provides specialized integer and float types with specific bit widths, such as `int8`, `int16`, `int32`, `int64`, and `double`. These types can be useful when you need precise control over the numeric representation in database backends.
+Retrievers SDK provides specialized integer and float types with specific bit widths, such as `int8`, `int16`, `int32`, `int64`, and `double`. These types can be useful when you need precise control over the numeric representation in database backends.
 
 <Note>
 In most cases, using standard Python `int` and `float` types is sufficient. The specialized numeric types are primarily useful when working with database backends that have specific schema requirements or when you need to enforce value ranges.
@@ -83,7 +83,7 @@ Context classes provide two ways to control field serialization:
 If you need a field that's used only within Python code and never serialized, consider using `PrivateAttr` instead of `Field(exclude=True)`. The `PrivateAttr` approach has the advantage of not appearing in the constructor arguments, making the API cleaner.
 </Warning>
 
-`Field(hidden=True)` marks a field as hidden from default serialization, but it can still be included when explicitly requested. Hidden fields are excluded when serializing for external libraries like DSPy or LLMs, but they are included when serializing for Modaic's internal use and database storage. You can access hidden fields by using `model_dump(include_hidden=True)` or `model_dump_json(include_hidden=True)`.
+`Field(hidden=True)` marks a field as hidden from default serialization, but it can still be included when explicitly requested. Hidden fields are excluded when serializing for external libraries like DSPy or LLMs, but they are included when serializing for `retrievers`'s internal use and database storage. You can access hidden fields by using `model_dump(include_hidden=True)` or `model_dump_json(include_hidden=True)`.
 
 Hidden fields are particularly useful for:
 - IDs, references, and metadata that would clutter the context window when working with LLMs
@@ -98,7 +98,7 @@ The `@field_validator` decorator is used to validate or transform individual fie
 
 ```python
 from pydantic import field_validator
-from modaic.context import Context
+from retrievers.context import Context
 
 class User(Context):
     username: str
@@ -116,7 +116,7 @@ The `@model_validator` decorator operates on the entire model, either before or 
 
 ```python
 from pydantic import model_validator
-from modaic.context import Context
+from retrievers.context import Context
 
 class Profile(Context):
     first_name: str
@@ -153,7 +153,7 @@ For context objects that support multiple embeddings (useful for hybrid search o
 ```python
 from typing import Optional
 from PIL import Image
-from modaic.context import Context, HydratedAttr, requires_hydration
+from retrievers.context import Context, HydratedAttr, requires_hydration
 
 class TwitterPost(Context):
     text: str
@@ -178,7 +178,7 @@ When implementing `embedme` with an index parameter, always include a default ca
 
 Sometimes you need your Context object to store complex Python objects from libraries or internal modules that aren't directly serializable. These objects can provide additional functionality but shouldn't be part of the serialized representation.
 
-In Modaic, the common pattern is to store:
+In `retrievers`, the common pattern is to store:
 1. A serialized version as a regular Pydantic field (for persistence)
 2. The actual object as a `PrivateAttr` (for in-memory operations)
 
@@ -188,7 +188,7 @@ All `PrivateAttr` fields must be prefixed with an underscore to distinguish them
 from typing import Any, Dict, List
 from pydantic import Field, PrivateAttr, model_validator
 import pandas as pd
-from modaic.context import Context
+from retrievers.context import Context
 
 class Table(Context):
     content: str = ""
@@ -223,7 +223,7 @@ The `@model_validator(mode="wrap")` decorator is particularly useful for initial
 
 ## Working with Files - HydratedAttr
 
-While `PrivateAttr` works well for small serializable objects, vector and graph databases have storage limits and cost considerations that make them unsuitable for large data. For larger objects like images, audio files, or large datasets, Modaic provides the concept of hydration.
+While `PrivateAttr` works well for small serializable objects, vector and graph databases have storage limits and cost considerations that make them unsuitable for large data. For larger objects like images, audio files, or large datasets, `retrievers` provides the concept of hydration.
 
 Hydration is a pattern where:
 1. You store a reference to external data (like a file path or URL) in your serialized Context
@@ -247,8 +247,8 @@ from typing import Literal, Optional, IO
 from pathlib import Path
 import pandas as pd
 from pydantic import Field
-from modaic.context import Context, HydratedAttr, requires_hydration
-from modaic.storage.file_store import FileStore
+from retrievers.context import Context, HydratedAttr, requires_hydration
+from retrievers.storage.file_store import FileStore
 
 class TableFile(Context):
     """A Context object to represent table documents such as excel, csv and tsv files."""
@@ -327,4 +327,4 @@ class TwitterPost(Context):
 ```
 </Info>
 
-By combining regular fields, private attributes, and hydrated attributes, you can create Context classes that efficiently represent complex data structures while maintaining compatibility with the Modaic ecosystem.
+By combining regular fields, private attributes, and hydrated attributes, you can create Context classes that efficiently represent complex data structures while maintaining compatibility with the `retrievers` ecosystem.

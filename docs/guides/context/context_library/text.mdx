@@ -2,8 +2,6 @@
 title: Text
 ---
 
-# Text
-
 The Text context classes provide a flexible way to work with textual data in your agents and retrieval systems. They enable you to represent, manipulate, and chunk text for semantic operations while maintaining compatibility with the Context ecosystem. Both Text and TextFile classes support chunking through the `chunk_text()` method, allowing you to split content into semantically meaningful segments. These classes form the foundation for many text-based agent workflows, from simple question answering to complex document analysis.
 
 ## Text
@@ -11,7 +9,7 @@ The Text context classes provide a flexible way to work with textual data in you
 The `Text` class represents in-memory text content that can be directly manipulated and embedded. It's designed for working with smaller text snippets or documents that can be comfortably stored in memory. This class is ideal for chat messages, paragraphs, or short documents where the entire content should be serialized with the context object.
 
 ```python
-from modaic.context import Text
+from retrievers.context import Text
 
 # Create a simple text context
 t = Text(text="The quick brown fox jumps over the lazy dog.")
@@ -40,8 +38,8 @@ print(f"Loaded article with {len(article.text)} characters")
 The `TextFile` class represents text content backed by a file in a `FileStore`. It uses hydration to load text on demand, making it suitable for larger documents that shouldn't be fully serialized in database records. This class is perfect for working with long articles, reports, or any text where you want to maintain a reference rather than storing the entire content.
 
 ```python
-from modaic.context import TextFile
-from modaic.storage import InPlaceFileStore
+from retrievers.context import TextFile
+from retrievers.storage import InPlaceFileStore
 
 # Set up a file store pointing to your documents directory
 store = InPlaceFileStore("data/documents")
@@ -136,7 +134,7 @@ print(file_text.text)
 Loads the text content from the referenced file in the provided FileStore, populating the `_text` attribute.
 
 ```python
-from modaic.storage import InPlaceFileStore
+from retrievers.storage import InPlaceFileStore
 import os
 
 # Create a directory and file for demonstration

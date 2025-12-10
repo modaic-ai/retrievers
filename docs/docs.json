@@ -1,6 +1,6 @@
 {
   "theme": "mint",
-  "name": "Modaic Docs",
+  "name": "Retrievers Docs",
   "colors": {
     "primary": "#8800c2",
     "light": "#cc8c98"
@@ -17,57 +17,69 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "SDK Reference",
-        "icon": "square-terminal",
+        "tab": "Documentation",
+        "icon": "book",
         "groups": [
           {
-            "group": "Programs",
+            "group": "Get Started",
             "pages": [
-              {
-                "title": "PrecompiledProgram",
-                "description": "The Precompiled Program Class",
-                "path": "sdk_reference/vdb_alchemy/precompiled"
-              },
-              {
-                "title": "AutoProgram",
-                "description": "Load Programs from the Modaic Hub",
-                "path": "sdk_reference/vdb_alchemy/auto"
-              }
+              "index"
             ]
           },
           {
             "group": "Context",
             "pages": [
+              "guides/context/context_class_intro",
+              "guides/context/custom_context",
               {
-                "title": "Bases Classes",
-                "description": "The Base Context Classes",
-                "path": "sdk_reference/vdb_alchemy/context/base"
-              },
-              {
-                "title": "Table",
-                "description": "The Table Context Classes",
-                "path": "sdk_reference/vdb_alchemy/context/table"
-              },
-              {
-                "title": "Text",
-                "description": "The Text Context Classes",
-                "path": "sdk_reference/vdb_alchemy/context/text"
-              },
-              {
-                "title": "DTypes",
-                "description": "Modaic DTypes",
-                "path": "sdk_reference/vdb_alchemy/context/dtype_mapping"
+                "group": "Context Library",
+                "pages": [
+                  "guides/context/context_library/index",
+                  "guides/context/context_library/text",
+                  "guides/context/context_library/table"
+                ]
               }
+            ]
+          },
+          {
+            "group": "Databases",
+            "pages": [
+              "guides/databases/vdb_alchemy",
+              "guides/databases/sql_db",
+              "guides/databases/graph_db"
+            ]
+          },
+          {
+            "group": "Retrievers",
+            "pages": [
+              "guides/retrievers/retrievers"
+            ]
+          },
+          {
+            "group": "Storage",
+            "pages": [
+              "guides/storage/file_stores"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK Reference",
+        "icon": "square-terminal",
+        "groups": [
+          {
+            "group": "Context",
+            "pages": [
+              "sdk_reference/retrievers/context/base",
+              "sdk_reference/retrievers/context/table",
+              "sdk_reference/retrievers/context/text",
+              "sdk_reference/retrievers/context/dtype_mapping"
             ]
           },
           {
             "group": "Indexing",
             "pages": [
-              {
-                "title": "Indexing Utils",
-                "description": "The Indexing Utils Class",
-                "path": "sdk_reference/vdb_alchemy/indexing"
-              }
+              "sdk_reference/retrievers/indexing"
             ]
           },
           {
@@ -76,48 +88,25 @@
               {
                 "group": "Vector Database",
                 "pages": [
-                  {
-                    "title": "VectorDatabase Class",
-                    "description": "The Vector Database Class",
-                    "path": "sdk_reference/vdb_alchemy/databases/vector_database"
-                  },
+                  "sdk_reference/retrievers/databases/vector_database/vector_database",
                   {
                     "group": "Vendors",
                     "pages": [
-                      {
-                        "title": "Milvus",
-                        "description": "Milvus Integration",
-                        "path": "sdk_reference/vdb_alchemy/databases/vector_database/vendors/milvus"
-                      }
+                      "sdk_reference/retrievers/databases/vector_database/vendors/milvus"
                     ]
                   },
-                  {
-                    "title": "VDB Query Language",
-                    "description": "The Modaic Query Language Class",
-                    "path": "sdk_reference/vdb_alchemy/query_language"
-                  }
+                  "sdk_reference/retrievers/query_language"
                 ]
               },
-              {
-                "title": "SQL Database",
-                "description": "A SQL Database for RAG over Tables",
-                "path": "sdk_reference/vdb_alchemy/databases/sql_database"
-              },
-              {
-                "title": "Graph Database",
-                "description": "A Graph Database for RAG over Graphs",
-                "path": "sdk_reference/vdb_alchemy/databases/graph_database"
-              }
+              "sdk_reference/retrievers/databases/sql_database",
+              "sdk_reference/retrievers/databases/graph_database"
             ]
           },
           {
             "group": "Context Storage",
             "pages": [
-              {
-                "title": "Bases Classes",
-                "description": "The Bases Classes",
-                "path": "sdk_reference/vdb_alchemy/storage/context_store"
-              }
+              "sdk_reference/retrievers/storage/file_store",
+              "sdk_reference/retrievers/storage/pickle_store"
             ]
           }
         ]
@@ -126,7 +115,7 @@
     "menu": [
       {
         "label": "GitHub",
-        "href": "https://github.com/modaic/modaic"
+        "href": "https://github.com/modaic-ai/retrievers"
       }
     ]
   },

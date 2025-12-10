@@ -4,7 +4,7 @@ title: Graph Database
 <Warning>This feature is experimental and is subject to change.</Warning>
 <Danger>Writing to a graph database is not thread safe yet. We are actively working on a fix.</Danger>
 
-Modaic provides a small, ergonomic ORM over [GQLAlchemy](https://memgraph.github.io/gqlalchemy/) to work with graph databases (Neo4j, Memgraph) using `Context` and `Relation` classes. This guide mirrors the style of our SQL guide and focuses on practical, copy‑pasteable examples.
+Retrievers provides a small, ergonomic ORM over [GQLAlchemy](https://memgraph.github.io/gqlalchemy/) to work with graph databases (Neo4j, Memgraph) using `Context` and `Relation` classes. This guide mirrors the style of our SQL guide and focuses on practical, copy‑pasteable examples.
 
 
 ## Quickstart
@@ -12,14 +12,14 @@ Modaic provides a small, ergonomic ORM over [GQLAlchemy](https://memgraph.github
 ### Install
 If you plan to use the graph features, install the extra:
 ```bash
-uv add "modaic[graph]"
+uv add "retrievers[graph]"
 ```
 
 Create a DB, define simple `Context`/`Relation` types, save nodes and relationships, and run Cypher.
 
 ```python
-from modaic.databases import GraphDatabase, Neo4jConfig
-from modaic.context import Context, Relation
+from retrievers.databases import GraphDatabase, Neo4jConfig
+from retrievers.context import Context, Relation
 
 # 1) Connect
 db = GraphDatabase(Neo4jConfig())
@@ -58,7 +58,7 @@ Create a database by instantiating a backend config and passing it to `GraphData
 
 ### Neo4jConfig
 ```python
-from modaic.databases import GraphDatabase, Neo4jConfig
+from retrievers.databases import GraphDatabase, Neo4jConfig
 
 # Custom parameters
 config = Neo4jConfig(
@@ -77,7 +77,7 @@ db = GraphDatabase(config)
 
 ### MemgraphConfig
 ```python
-from modaic.databases import GraphDatabase, MemgraphConfig
+from retrievers.databases import GraphDatabase, MemgraphConfig
 
 # Custom parameters
 config = MemgraphConfig(
@@ -211,5 +211,5 @@ db.save_relationship(LocatedIn(start_node=company, end_node=nyc))
 <Danger>The save methods are not thread safe yet. Avoid concurrent writes to the same database from multiple threads or processes.</Danger>
 
 ## See also
-- `modaic.context.base.Context` and `Relation` for the ORM model
-- Reference pages for `modaic.databases.graph_database` configs
+- `retrievers.context.base.Context` and `Relation` for the ORM model
+- Reference pages for `retrievers.databases.graph_database` configs
