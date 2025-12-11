@@ -18,4 +18,5 @@ jobs:
                         repo: 'modaic-docs',
                         workflow_id: 'mintlify.yml',
                         ref: 'main',
+                        inputs: {}
                       })
