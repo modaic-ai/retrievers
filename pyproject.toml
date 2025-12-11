@@ -1,6 +1,6 @@
 [project]
 name = "mo-retrievers"
-version = "0.1.0"
+version = "0.1.1"
 description = "Easily build powerful retrieval algorithms for AI Agents"
 readme = "README.md"
 authors = [{ name = "Tyrin", email = "tytodd@mit.edu" }, {name = "Farouk", email = "farouk@modaic.dev"}]
@@ -26,7 +26,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/modaic-ai/retrievers"
 Modaic = "https://www.modaic.dev"
-Docs = "https://retrievers.modaic.dev"
+Docs = "https://docs.modaic.dev/retrievers"
 
 [tool.uv.sources]
 pydoc-mintlify = { path = "../../../Projects/pydoc-mintlify", editable = true }
