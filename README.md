@@ -1,3 +1,6 @@
+[![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://docs.modaic.dev/retrievers)
+[![PyPI](https://img.shields.io/pypi/v/mo-retrievers)](https://pypi.org/project/mo-retrievers/)
+
 # Retrievers SDK
 
 # Installation
