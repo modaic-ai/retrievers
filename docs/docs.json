@@ -40,7 +40,7 @@
             ]
           },
           {
-            "group": "Databasesssss",
+            "group": "Databases",
             "pages": [
               "guides/databases/vdb_alchemy",
               "guides/databases/sql_db",
