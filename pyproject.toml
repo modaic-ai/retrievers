@@ -1,9 +1,11 @@
 [project]
 name = "mo-retrievers"
 version = "0.1.0"
-description = "Add your description here"
+description = "Easily build powerful retrieval algorithms for AI Agents"
 readme = "README.md"
+authors = [{ name = "Tyrin", email = "tytodd@mit.edu" }, {name = "Farouk", email = "farouk@modaic.dev"}]
 requires-python = ">=3.10"
+homepage = "https://github.com/modaic-ai/retrievers"
 dependencies = [
     "aenum>=3.1.16",
     "duckdb>=1.4.3",
@@ -21,6 +23,10 @@ dependencies = [
 ]
 
 
+[project.urls]
+Homepage = "https://github.com/modaic-ai/retrievers"
+Modaic = "https://www.modaic.dev"
+Docs = "https://retrievers.modaic.dev"
 
 [tool.uv.sources]
 pydoc-mintlify = { path = "../../../Projects/pydoc-mintlify", editable = true }
