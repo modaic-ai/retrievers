@@ -60,15 +60,45 @@
       {
         "tab": "SDK Reference",
         "icon": "square-terminal",
-        "products": [
+        "groups": [
           {
-            "product": "Analytics Platform",
-            "description": "Analytics Platform description",
-            "icon": "chart-bar",
+            "group": "Context",
             "pages": [
-              "analytics/overview",
-              "analytics/dashboard",
-              "analytics/reports"
+              "sdk_reference/retrievers/context/base",
+              "sdk_reference/retrievers/context/table",
+              "sdk_reference/retrievers/context/text",
+              "sdk_reference/retrievers/context/dtype_mapping"
+            ]
+          },
+          {
+            "group": "Indexing",
+            "pages": ["sdk_reference/retrievers/indexing"]
+          },
+          {
+            "group": "Databases",
+            "pages": [
+              {
+                "group": "Vector Database",
+                "pages": [
+                  "sdk_reference/retrievers/databases/vector_database/vector_database",
+                  {
+                    "group": "Vendors",
+                    "pages": [
+                      "sdk_reference/retrievers/databases/vector_database/vendors/milvus"
+                    ]
+                  },
+                  "sdk_reference/retrievers/query_language"
+                ]
+              },
+              "sdk_reference/retrievers/databases/sql_database",
+              "sdk_reference/retrievers/databases/graph_database"
+            ]
+          },
+          {
+            "group": "Context Storage",
+            "pages": [
+              "sdk_reference/retrievers/storage/file_store",
+              "sdk_reference/retrievers/storage/pickle_store"
             ]
           }
         ]
