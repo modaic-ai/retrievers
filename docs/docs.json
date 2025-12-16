@@ -24,7 +24,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["index"]
+            "pages": [
+              "index"
+            ]
           },
           {
             "group": "Context",
@@ -51,11 +53,15 @@
           },
           {
             "group": "Retrievers",
-            "pages": ["guides/retrievers/retrievers"]
+            "pages": [
+              "guides/retrievers/retrievers"
+            ]
           },
           {
             "group": "Storage",
-            "pages": ["guides/storage/file_stores"]
+            "pages": [
+              "guides/storage/file_stores"
+            ]
           }
         ]
       },
@@ -74,7 +80,9 @@
           },
           {
             "group": "Indexing",
-            "pages": ["sdk_reference/retrievers/indexing"]
+            "pages": [
+              "sdk_reference/retrievers/indexing"
+            ]
           },
           {
             "group": "Databases",
