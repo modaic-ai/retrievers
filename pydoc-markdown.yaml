@@ -2,7 +2,7 @@
 loaders:
   - type: python
     search_path: ["."]          # <- classic src/ layout
-    # packages: ["retrievers"]
+    packages: ["retrievers"]
     # modules: ["retrievers.indexing"]
 
 processors:
